@@ -1,132 +1,69 @@
-// ==========================================================================
-// VIDHI PANCHAL — FIELD NOTES
-// Ambient particles, scroll reveals, navigation behaviour
-// ==========================================================================
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{ threshold:0.15 });
+  revealEls.forEach(el=>io.observe(el));
 
-document.getElementById('year').textContent = new Date().getFullYear();
+  // floating atmosphere: gold dust, tiny molecules, microbes, DNA fragments
+  const field = document.getElementById('particles');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dustCount = reduced ? 0 : 20;
+  for(let i=0;i<dustCount;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    const size = 2 + Math.random()*3;
+    p.style.width = size+'px';
+    p.style.height = size+'px';
+    p.style.left = Math.random()*100+'vw';
+    p.style.bottom = (-10 - Math.random()*20)+'px';
+    p.style.animationDuration = (14 + Math.random()*16)+'s';
+    p.style.animationDelay = (Math.random()*16)+'s';
+    field.appendChild(p);
+  }
+  const motifs = [
+    '<svg width="16" height="16" viewBox="0 0 16 16"><circle cx="4" cy="8" r="2" fill="none" stroke="#9C5A34" stroke-width="1"/><circle cx="12" cy="8" r="2" fill="none" stroke="#9C5A34" stroke-width="1"/><path d="M6 8H10" stroke="#9C5A34" stroke-width="1"/></svg>',
+    '<svg width="14" height="18" viewBox="0 0 14 18"><path d="M3 1 Q9 5 3 9 Q9 13 3 17" fill="none" stroke="#A8792F" stroke-width="1"/><path d="M3 5H8 M3 9H8 M3 13H8" stroke="#A8792F" stroke-width="0.8"/></svg>',
+    '<svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7 Q4 2 8 4 Q12 6 10 10 Q8 13 4 11 Q1 9 2 7Z" fill="none" stroke="#8B4A2B" stroke-width="1"/></svg>'
+  ];
+  const motifCount = reduced ? 0 : 10;
+  for(let i=0;i<motifCount;i++){
+    const p = document.createElement('div');
+    p.style.position='absolute';
+    p.style.opacity='0';
+    p.style.left = Math.random()*100+'vw';
+    p.style.bottom = (-10 - Math.random()*20)+'px';
+    p.style.animation = 'drift linear infinite';
+    p.style.animationDuration = (20 + Math.random()*18)+'s';
+    p.style.animationDelay = (Math.random()*18)+'s';
+    p.innerHTML = motifs[i % motifs.length];
+    field.appendChild(p);
+  }
 
-/* ---------- Nav toggle (mobile) ---------- */
-const navToggle = document.getElementById('nav-toggle');
-const navLinks = document.getElementById('nav-links');
-navToggle.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('is-open');
-  navToggle.setAttribute('aria-expanded', String(isOpen));
-});
-navLinks.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => {
-    navLinks.classList.remove('is-open');
-    navToggle.setAttribute('aria-expanded', 'false');
-  });
-});
-
-/* ---------- Sticky nav shadow on scroll ---------- */
-const siteNav = document.getElementById('site-nav');
-let lastScroll = 0;
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  siteNav.style.boxShadow = y > 12 ? '0 6px 20px rgba(60,40,20,0.08)' : 'none';
-  lastScroll = y;
-}, { passive: true });
-
-/* ---------- Scroll reveal ---------- */
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const revealEls = document.querySelectorAll('.reveal');
-
-if (prefersReducedMotion) {
-  revealEls.forEach(el => el.classList.add('is-visible'));
-} else {
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-  revealEls.forEach(el => io.observe(el));
-}
-
-/* ---------- Ambient particle system ----------
-   Slow-drifting dust, DNA-inspired dots and soft gold sparkles.
-   Kept subtle and non-distracting; paused for reduced-motion users. */
-const canvas = document.getElementById('particle-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-let width, height, dpr;
-
-function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-  width = window.innerWidth;
-  height = document.documentElement.scrollHeight;
-  canvas.width = width * dpr;
-  canvas.height = Math.min(height, window.innerHeight * 2.2) * dpr;
-  canvas.style.width = width + 'px';
-  canvas.style.height = Math.min(height, window.innerHeight * 2.2) + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-}
-
-function makeParticle() {
-  const kinds = ['dust', 'dust', 'dust', 'gold', 'ring'];
-  const kind = kinds[Math.floor(Math.random() * kinds.length)];
-  return {
-    kind,
-    x: Math.random() * width,
-    y: Math.random() * (canvas.height / dpr),
-    r: kind === 'ring' ? 2 + Math.random() * 2.5 : 0.6 + Math.random() * 1.8,
-    vx: (Math.random() - 0.5) * 0.06,
-    vy: -0.05 - Math.random() * 0.12,
-    o: 0.15 + Math.random() * 0.35,
-    driftSeed: Math.random() * Math.PI * 2
-  };
-}
-
-function initParticles() {
-  const count = Math.min(70, Math.floor((width * height) / 26000));
-  particles = Array.from({ length: Math.max(28, count) }, makeParticle);
-}
-
-function draw() {
-  ctx.clearRect(0, 0, width, canvas.height / dpr);
-  const t = performance.now() / 6000;
-
-  particles.forEach(p => {
-    p.x += p.vx + Math.sin(t + p.driftSeed) * 0.04;
-    p.y += p.vy;
-
-    if (p.y < -10) { p.y = (canvas.height / dpr) + 10; p.x = Math.random() * width; }
-    if (p.x < -10) p.x = width + 10;
-    if (p.x > width + 10) p.x = -10;
-
-    ctx.beginPath();
-    if (p.kind === 'gold') {
-      ctx.fillStyle = `rgba(198,166,100,${p.o})`;
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-    } else if (p.kind === 'ring') {
-      ctx.strokeStyle = `rgba(139,98,57,${p.o * 0.6})`;
-      ctx.lineWidth = 0.6;
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.stroke();
-    } else {
-      ctx.fillStyle = `rgba(74,53,36,${p.o * 0.5})`;
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+  // closing reflection: gentle gold dust + tiny stars, confined to the frame
+  const reflectionField = document.getElementById('reflectionParticles');
+  if(reflectionField){
+    const dustN = reduced ? 0 : 14;
+    for(let i=0;i<dustN;i++){
+      const d = document.createElement('div');
+      d.className = 'r-dust';
+      const size = 2 + Math.random()*2.5;
+      d.style.width = size+'px';
+      d.style.height = size+'px';
+      d.style.left = Math.random()*100+'%';
+      d.style.bottom = (Math.random()*60)+'px';
+      d.style.animationDuration = (10 + Math.random()*10)+'s';
+      d.style.animationDelay = (Math.random()*10)+'s';
+      reflectionField.appendChild(d);
     }
-  });
-
-  requestAnimationFrame(draw);
-}
-
-if (!prefersReducedMotion) {
-  resize();
-  initParticles();
-  requestAnimationFrame(draw);
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => { resize(); initParticles(); }, 200);
-  });
-} else {
-  canvas.style.display = 'none';
-}
+    const sparkN = reduced ? 0 : 10;
+    for(let i=0;i<sparkN;i++){
+      const s = document.createElement('div');
+      s.className = 'r-spark';
+      s.style.left = Math.random()*100+'%';
+      s.style.top = Math.random()*100+'%';
+      s.style.animationDuration = (2.5 + Math.random()*3)+'s';
+      s.style.animationDelay = (Math.random()*4)+'s';
+      reflectionField.appendChild(s);
+    }
+  }
