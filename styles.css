@@ -253,16 +253,19 @@
   #skills{ position:relative; overflow:visible; }
   .skills-illustration-wrap{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:visible; }
 
-  /* whole illustration (petri dish, pipette, molecule), shown in full rather than cropped,
-     styled the same way as the experience section's watercolor treatment. */
-  .skills-art-whole{
-    position:absolute; top:-7%; right:-6%; width:min(560px, 62vw); height:auto;
-    opacity:0.42; mix-blend-mode:multiply; filter:sepia(0.14) saturate(0.85) contrast(0.97);
-    -webkit-mask-image:radial-gradient(ellipse 64% 60% at 68% 30%, black 40%, rgba(0,0,0,0.55) 62%, transparent 88%);
-            mask-image:radial-gradient(ellipse 64% 60% at 68% 30%, black 40%, rgba(0,0,0,0.55) 62%, transparent 88%);
-    transition:opacity .5s ease;
+  /* petri dish illustration, sitting beside the "Skills" heading itself rather than
+     washed across the section background. Sized to complement the heading, not dominate it. */
+  .skills-header-art{
+    width:76px; height:auto; align-self:center;
+    filter:drop-shadow(0 5px 12px rgba(59,42,29,0.18));
+    animation:skills-header-float 5.5s ease-in-out infinite;
+    pointer-events:none;
   }
-  #skills:hover .skills-art-whole{ opacity:0.56; }
+  @keyframes skills-header-float{
+    0%,100%{ transform:rotate(-4deg) translateY(0); }
+    50%{ transform:rotate(-4deg) translateY(-6px); }
+  }
+  @media (prefers-reduced-motion:reduce){ .skills-header-art{ animation:none; } }
 
   /* a short strand of DNA, sketched near the heading rather than running the full height */
   .skills-dna{ position:absolute; top:-1%; right:15%; height:96px; width:24px; opacity:0.26; }
@@ -281,25 +284,35 @@
   .skills-note.n2{ bottom:1.5%; right:0.8%; transform:rotate(2deg); font-size:0.82rem; }
 
   @media (max-width:900px){
-    .skills-art-whole{ width:min(400px, 82vw); top:-4%; right:-10%; opacity:0.34; }
     .skills-dna{ height:74px; width:20px; right:8%; }
     .skills-doodle.d-cross{ display:none; }
   }
   @media (max-width:600px){
+    .skills-header-art{ width:54px; }
     .skills-doodle.d-cell, .skills-doodle.d-microbe, .skills-doodle.d-cross,
     .skills-note.n2{ display:none; }
     .skills-illustration-wrap{ overflow:hidden; }
-    .skills-art-whole{ opacity:0.26; }
     .skills-dna{ height:56px; width:16px; top:0; right:6%; opacity:0.3; }
     .skills-note.n1{ font-size:0.85rem; left:16%; }
   }
 
   
 
-  .edu-art{ position:absolute; top:0; right:0; width:170px; height:auto; opacity:0.5; pointer-events:none; z-index:0; transition:opacity .4s ease; }
-  .cert-art{ position:absolute; top:0; right:0; width:180px; height:auto; opacity:0.5; pointer-events:none; z-index:0; transition:opacity .4s ease; }
-  section:hover > .container > .edu-art,
-  section:hover > .container > .cert-art{ opacity:0.75; }
+  /* education & certifications: illustrations sit beside their heading rather than
+     hovering as a large overlay across the section. */
+  .edu-header-art, .cert-header-art{
+    align-self:center; height:auto; pointer-events:none;
+    filter:drop-shadow(0 5px 12px rgba(59,42,29,0.18));
+    transition:transform .4s ease;
+  }
+  .edu-header-art{ width:88px; transform:rotate(2.5deg); }
+  .cert-header-art{ width:96px; transform:rotate(-2.5deg); }
+  section:hover > .container > .sec-head .edu-header-art,
+  section:hover > .container > .sec-head .cert-header-art{ transform:rotate(0deg) scale(1.04); }
+  @media (max-width:600px){
+    .edu-header-art{ width:60px; }
+    .cert-header-art{ width:64px; }
+  }
   .timeline{ position:relative; padding-left:36px; z-index:1; }
   .timeline::before{ content:""; position:absolute; left:7px; top:6px; bottom:6px; width:1px; background:var(--line); background-image:linear-gradient(var(--line) 60%, transparent 0%); background-size:1px 6px; }
   .tl-item{ position:relative; margin-bottom:38px; }
