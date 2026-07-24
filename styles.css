@@ -250,40 +250,19 @@
     .exp-ink-smudge{ display:none; }
   }
 
-  #skills{ position:relative; overflow:visible; --skills-art:url("images/skills-illustration.webp"); }
+  #skills{ position:relative; overflow:visible; }
   .skills-illustration-wrap{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:visible; }
 
-  /* scattered notebook marginalia: small independent sketches placed only in the section's
-     edges/gutters and the heading band, never spanning behind the card grid. Each crop reuses
-     the same sprite sheet as a small individually-framed window. */
-  .skills-crop{
-    position:absolute; background-image:var(--skills-art); background-repeat:no-repeat;
-    background-size:760px 613px; mix-blend-mode:multiply; filter:sepia(0.14) saturate(0.85) contrast(0.97);
-    opacity:0.4; transition:opacity .5s ease;
+  /* whole illustration (petri dish, pipette, molecule), shown in full rather than cropped,
+     styled the same way as the experience section's watercolor treatment. */
+  .skills-art-whole{
+    position:absolute; top:-7%; right:-6%; width:min(560px, 62vw); height:auto;
+    opacity:0.42; mix-blend-mode:multiply; filter:sepia(0.14) saturate(0.85) contrast(0.97);
+    -webkit-mask-image:radial-gradient(ellipse 64% 60% at 68% 30%, black 40%, rgba(0,0,0,0.55) 62%, transparent 88%);
+            mask-image:radial-gradient(ellipse 64% 60% at 68% 30%, black 40%, rgba(0,0,0,0.55) 62%, transparent 88%);
+    transition:opacity .5s ease;
   }
-  #skills:hover .skills-crop{ opacity:0.54; }
-
-  /* petri dish, half-visible, peeking from the upper-right corner */
-  .skills-crop.crop-dish-peek{
-    width:150px; height:135px; background-position:-150px -25px;
-    top:-3%; right:-2%;
-    -webkit-mask-image:linear-gradient(205deg, black 38%, transparent 76%);
-            mask-image:linear-gradient(205deg, black 38%, transparent 76%);
-  }
-  /* pipette, entering from the lower-left edge */
-  .skills-crop.crop-pipette-edge{
-    width:66px; height:165px; background-position:-8px -20px;
-    bottom:-3%; left:-1.5%; transform:rotate(-12deg);
-    -webkit-mask-image:linear-gradient(8deg, black 32%, transparent 78%);
-            mask-image:linear-gradient(8deg, black 32%, transparent 78%);
-  }
-  /* small molecular sketch, tucked into an empty upper-left corner */
-  .skills-crop.crop-molecule-corner{
-    width:92px; height:88px; background-position:-535px -4px;
-    top:2%; left:1.5%;
-    -webkit-mask-image:radial-gradient(circle at 55% 40%, black 42%, transparent 80%);
-            mask-image:radial-gradient(circle at 55% 40%, black 42%, transparent 80%);
-  }
+  #skills:hover .skills-art-whole{ opacity:0.56; }
 
   /* a short strand of DNA, sketched near the heading rather than running the full height */
   .skills-dna{ position:absolute; top:-1%; right:15%; height:96px; width:24px; opacity:0.26; }
@@ -302,18 +281,15 @@
   .skills-note.n2{ bottom:1.5%; right:0.8%; transform:rotate(2deg); font-size:0.82rem; }
 
   @media (max-width:900px){
-    .skills-crop.crop-dish-peek{ width:110px; height:100px; opacity:0.85; }
-    .skills-crop.crop-pipette-edge{ width:52px; height:130px; }
-    .skills-crop.crop-molecule-corner{ width:70px; height:66px; }
+    .skills-art-whole{ width:min(400px, 82vw); top:-4%; right:-10%; opacity:0.34; }
     .skills-dna{ height:74px; width:20px; right:8%; }
     .skills-doodle.d-cross{ display:none; }
   }
   @media (max-width:600px){
-    .skills-crop.crop-pipette-edge, .skills-crop.crop-molecule-corner,
     .skills-doodle.d-cell, .skills-doodle.d-microbe, .skills-doodle.d-cross,
     .skills-note.n2{ display:none; }
     .skills-illustration-wrap{ overflow:hidden; }
-    .skills-crop.crop-dish-peek{ width:78px; height:70px; top:-1.5%; right:-3%; opacity:0.7; }
+    .skills-art-whole{ opacity:0.26; }
     .skills-dna{ height:56px; width:16px; top:0; right:6%; opacity:0.3; }
     .skills-note.n1{ font-size:0.85rem; left:16%; }
   }
